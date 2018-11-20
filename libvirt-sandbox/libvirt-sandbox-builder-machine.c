@@ -133,10 +133,14 @@ static gchar *gvir_sandbox_builder_machine_get_kernrelease(GVirSandboxConfig *co
 static gchar *gvir_sandbox_builder_machine_get_kernpath(GVirSandboxConfig *config)
 {
     const gchar *kernpath = gvir_sandbox_config_get_kernpath(config);
+    const gchar *default_kernpath = "/boot/vmlinuz-linux";
     gchar *kver;
     gchar *ret;
     if (kernpath)
         return g_strdup(kernpath);
+
+    if (access(default_kernpath, F_OK ) != -1)
+        return g_strdup(default_kernpath);
 
     kver = gvir_sandbox_builder_machine_get_kernrelease(config);
     ret = g_strdup_printf("/boot/vmlinuz-%s", kver);

@@ -553,8 +553,9 @@ omitted, defaults to match the current running host version.
 
 =item B<--kernpath=FILE-PATH>
 
-Specify the path to the kernel binary. If omitted, defaults
-to C</boot/vmlinuz-$KERNEL-VERSION>.
+Specify the path to the kernel binary. If omitted, defaults to
+C</boot/vmlinuz-linux> if exists, otherwise
+C</boot/vmlinuz-$KERNEL-VERSION> will be used.
 
 =item B<--kmodpath=DIR-PATH>
 
