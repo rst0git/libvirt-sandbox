@@ -297,7 +297,7 @@ static gboolean gvir_sandbox_builder_copy_program(const char *program,
     /* Loop over the output lines to get the path to the libraries to copy */
     line = out;
     while ((tmp = strchr(line, '\n'))) {
-        gchar *start, *end;
+        gchar *start, *end, *tmp2;
         *tmp = '\0';
 
         /* Search the line for the library path */
@@ -308,22 +308,20 @@ static gboolean gvir_sandbox_builder_copy_program(const char *program,
             const gchar *newname = NULL;
             *end = '\0';
 
+            if ((tmp2 = strstr(start, "=> ")))
+                start = tmp2 + 3;
+
             /* There are countless different naming schemes for
              * the ld-linux.so library across architectures. Pretty
              * much the only thing in common is they start with
-             * the two letters 'ld'. The LDD program prints it
-             * out differently too - it doesn't include " => "
-             * as this library is special - its actually a static
-             * linked executable not a library.
+             * the two letters 'ld'.
              *
              * To make life easier for libvirt-sandbox-init-{qemu,lxc}
              * we just call the file 'ld.so' when we copy it into our
              * scratch dir, no matter what it was called on the host.
              */
-            if (!strstr(line, " => ") &&
-                strstr(start, "/ld")) {
+            if (strstr(start, "/ld"))
                 newname = "ld.so";
-            }
 
             if (!gvir_sandbox_builder_copy_file(start, dest, newname, error))
                 goto cleanup;
